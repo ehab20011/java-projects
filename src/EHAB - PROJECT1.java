@@ -31,7 +31,7 @@ class GhostGame {
             
         }
 
-        boolean turn = true;
+        boolean turn = true; //boolean value
         while(turn){
         System.out.print("Enter the number of players: ");
         Players = input.nextInt(); //read userinput for # of players by doing input.nextInt
