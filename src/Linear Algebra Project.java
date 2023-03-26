@@ -1,9 +1,12 @@
 //EHAB ABDALLA - LINEAR ALGEBRA PROJECT
 import java.util.Scanner;
+import java.util.Arrays;
+
 
 class Main {
-    //This method will take some 2D matrix and solve it to RREF using Gauss-Jordan Elimination
-    public static int[][] gaussianElimination(int[][] matrix) {
+
+    //This method will take some SQUARE 2D matrix and solve it to RREF using Gauss-Jordan Elimination
+    public static int[][] Gauss_Jordan_Elimination_ONTO_SquareMatrices(int[][] matrix) {
         int numRows = matrix.length;
         int numCols = matrix[0].length;
     
@@ -48,25 +51,35 @@ class Main {
             // Reduce current row using pivot row
             int pivot = matrix[i][i];
             if (pivot != 0) {
-                for (int j = i + 1; j < numCols; j++) {
-                    matrix[i][j] /= pivot;
-                }
-                matrix[i][i] = 1;
-                for (int j = 0; j < numRows; j++) {
-                    if (j != i) {
-                        int factor = matrix[j][i];
-                        for (int k = 0; k < numCols; k++) {
-                            matrix[j][k] -= factor * matrix[i][k];
-                        }
-                        matrix[j][i] = 0;
+                int gcd = gcd(matrix[i][i], pivot);
+                matrix[i][i] /= gcd;
+                pivot /= gcd;
+                    for (int j = i + 1; j < numCols; j++) {
+                        int numerator = matrix[i][j] * pivot;
+                        int denominator = matrix[i][i];
+                        int tempGcd = gcd(numerator, denominator);
+                        matrix[i][j] = numerator / tempGcd;
+                        matrix[i][i] = denominator / tempGcd;
                     }
-                }
+                    for (int j = 0; j < numRows; j++) {
+                        if (j != i) {
+                            int factor = matrix[j][i];
+                                for (int k = 0; k < numCols; k++) {
+                                    int numerator = factor * matrix[i][k];
+                                    int denominator = matrix[i][i];
+                                    int tempGcd = gcd(numerator, denominator);
+                                    matrix[j][k] -= numerator / tempGcd;
+                                    matrix[j][i] = 0;
+                                 }
+                        }
+                    }
+
             }
+            
         }
     
         return matrix;
     }
-    
     
     //Check if a matrix is square
     public static boolean isSquare(int[][] matrixx){
@@ -87,8 +100,13 @@ class Main {
         return true; //Otherwise return true
     }
 
+    public static void Gauss_Jordan_Elimination_Onto_NONSquareMatrices(int[][] matrix) {
+         //NEED TO WRITE A METHOD THAT TAKES A NON SQUARE MATRIX AND SOLVES IT TO RREF AND DISPLAY THE SOLUTION LIKE THIS [ A ] = [x][b] , Where A is mxn or nxm. X and B are sized nx1. 
+    }
+    
+    
     //Check if a matrix is 2x2
-    public static boolean istwobytwo(int[][] matrix){
+    public static boolean isTwobyTwo(int[][] matrix){
         //this checks If the matrix is null or has a number of rows different from 2 OR either of the two rows with a number of columns different from 2.
         if(matrix==null || matrix.length != 2 || matrix[0].length != 2 || matrix[1].length != 2){
             //if ANY of those conditions produce true then we return false
@@ -100,7 +118,7 @@ class Main {
     }
     
     //Prints the 2D matrix after the user inputs the values
-    public static void printBeforeRREF(int[][] matr, int rows, int columns){
+    public static void DisplayMatrixBeforeAnything(int[][] matr, int rows, int columns){
     System.out.println("Matrix you inputed: ");
         for(int i=0; i<rows; i++){
             for(int j=0; j<columns; j++){
@@ -111,7 +129,7 @@ class Main {
         }
     }
     //Method that allows the USER to input all the values of the matrix
-    public static void populateArray(int[][] array) {
+    public static void LetUserPopulateArray(int[][] array) {
         Scanner scanner = new Scanner(System.in); //Using a scanner to get user input
         for (int i = 0; i < array.length; i++) {
             for (int j = 0; j < array[i].length; j++) {
@@ -132,14 +150,14 @@ class Main {
         }
     }
     //Method that will compute the determinant of a 2x2 matrix. Keep in mind this method will only be called if matrix is 2x2.
-    public static void twobytwodet(int[][] matrix){
-        System.out.println("It is 2x2");
-        System.out.println("So we can compute the determinant by doing d*a - b*a");
+    public static void TwoByTwoDeterminant(int[][] matrix){
+        System.out.println();
+        System.out.println("We can compute the determinant by doing d*a - b*a");
         int twobytwodeterminant = (matrix[0][0] * matrix[1][1]) - (matrix[0][1] * matrix[1][0]); //d * a - b * a , and store it into some int variable
         System.out.println("The Determinant of the 2x2 Matrix is: " + twobytwodeterminant); //print out the determinant
     }
     //Method that will compute the inverse matrix of a 2x2 matrix. Keep in mind this method will only be called if matrix is 2x2.
-    public static void inverseoftwobytwo(int[][] matrix){
+    public static void InverseOfTwoByTwo(int[][] matrix){
         //first we calculate the determinant by doing d * a - b * a and store it into a variable.
         int determinant = (matrix[0][0] * matrix[1][1]) - (matrix[0][1] * matrix[1][0]);
         //We check if det = 0 because if it is then the matrix is not invertible
@@ -190,7 +208,7 @@ class Main {
         return gcd(b, a % b);
     }
     //Method to calculate the determinant of matrices bigger than 2x2.
-    public static void calculateDeterminant(int[][] matrix) {
+    public static void Calculate_Determinant_Of_BiggerThan2x2_Square_Matrices(int[][] matrix) {
         int n = matrix.length; //Find the num of rows and set it equal to the int variable n
         int determinant = 1; //Declare a determinant variable
     
@@ -242,28 +260,31 @@ class Main {
 
         int[][] matrix = new int [rows][cols];
 
-        populateArray(matrix);
-        printBeforeRREF(matrix, rows, cols);
+        LetUserPopulateArray(matrix);
+        DisplayMatrixBeforeAnything(matrix, rows, cols);
         System.out.println();
-        
-        if(!isSquare(matrix)){
-        printAfterRREF(gaussianElimination(matrix));
-        }
 
         if(isSquare(matrix)){
             System.out.println("This is a square matrix. Now let's see if it's two by two..");
-            if(istwobytwo(matrix)){
-                twobytwodet(matrix);
-                System.out.println("The inverse of the 2x2 Matrix: ");
-                inverseoftwobytwo(matrix);
+            if(isTwobyTwo(matrix)){
+                System.out.println("It is also 2x2.. So.. ");
                 System.out.println();
-                printAfterRREF(gaussianElimination(matrix));
+                System.out.println("The inverse of the 2x2 Matrix: ");
+                InverseOfTwoByTwo(matrix);
+                TwoByTwoDeterminant(matrix);;
+                System.out.println();
+                printAfterRREF(Gauss_Jordan_Elimination_ONTO_SquareMatrices(matrix));
             }
             else{
                 System.out.println("It is not 2x2");
-                calculateDeterminant(matrix);
-                printAfterRREF(gaussianElimination(matrix));
+                Calculate_Determinant_Of_BiggerThan2x2_Square_Matrices(matrix);
+                printAfterRREF(Gauss_Jordan_Elimination_ONTO_SquareMatrices(matrix));
             }
+        }
+
+        if(!isSquare(matrix)){
+            System.out.println("The matrix is not square.");
+            Gauss_Jordan_Elimination_Onto_NONSquareMatrices(matrix);
         }
 
         
